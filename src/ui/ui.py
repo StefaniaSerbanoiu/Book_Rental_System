@@ -141,17 +141,19 @@ class UI:
 
     def search_book_by_author_ui(self):
         author = input("Introduce the author's name: ")
-        book = self.__book_services.search_by_author(author)
+        # book = self.__book_services.search_by_author(author)
+        book = self.__book_services.filter_by_author(author)
         if book:
-            print(book)
+            print(*book, sep='\n')
         else:
             print("The book was not found.")
 
     def search_book_by_title_ui(self):
         title = input("Introduce the title: ")
-        book = self.__book_services.search_by_title(title)
+        book = self.__book_services.filter_by_title(title)
+        # book = self.__book_services.search_by_title(title)
         if book:
-            print(book)
+            print(*book, sep='\n')
         else:
             print("The book was not found.")
 
@@ -168,23 +170,25 @@ class UI:
 
     def search_client_by_name_ui(self):
         name = input("Introduce the client's name: ")
-        client = self.__client_services.search_by_name(name)
+        # client = self.__client_services.search_by_name(name)
+        client = self.__client_services.filter_by_name(name)
         if client:
-            print(client)
+            print(*client, sep='\n')
         else:
             print("The client was not found.")
 
     def statistics_most_rented_books_ui(self):
-        most_rented_books_printable = self.__rental_services.sort_descending_order_most_rented_books().\
+        most_rented_books_printable = self.__rental_services.sort_descending_order_most_rented_books_shell_sort().\
             print_list_of_books()
         print(*most_rented_books_printable, sep='\n')
 
     def statistics_most_rented_authors_ui(self):
-        list_of_authors = self.__rental_services.sort_descending_order_most_rented_authors()
+        list_of_authors = self.__rental_services.sort_descending_order_most_rented_authors_shell_sort()
         print(*list_of_authors, sep='\n')
 
     def statistics_most_active_clients_ui(self):
-        list_of_clients = self.__rental_services.sort_descending_order_most_active_clients().print_list_of_clients()
+        list_of_clients = self.__rental_services.sort_descending_order_most_active_clients_shell_sort().\
+            print_list_of_clients()
         print(*list_of_clients, sep='\n')
 
     def print_all_rentals(self):

@@ -1,3 +1,4 @@
+from src.IterableDataStructure import filter_entity
 from src.repository.repository import ClientRepository
 from src.domain.Client import Client
 import random
@@ -38,6 +39,29 @@ class ClientServices:
             if self.__repository[index].client_id == client_id:
                 return self.__repository[index]
             index += 1
+
+    @staticmethod
+    def acceptance_function_for_client_name(element, name):
+        name_to_check = element[0].lower()
+
+        if name_to_check == name or name in name_to_check:
+            return True
+
+        return False
+
+    def get_client_list_for_filtering(self):
+        list_to_filter = list()
+
+        for item in self.__repository:
+            list_to_filter.append([item.name, item.client_id])
+
+        return list_to_filter
+
+    def filter_by_name(self, name):
+        list_to_filter = self.get_client_list_for_filtering()
+        name = name.lower()
+        filtered_list = filter_entity(list_to_filter, self.acceptance_function_for_client_name, name)
+        return filtered_list
 
     def search_by_name(self, name):
         length = len(self.__repository)

@@ -44,12 +44,12 @@ class BookRepositoryTests(unittest.TestCase):
             pass
 
     def test_delete_book__valid_object__remove_successfully(self):
-        self.repo.delete_book(1003)
+        self.repo.remove(1003)
         self.assertEqual(self.repo[1].book_id,1093)
 
     def test_delete_book__nonexistent_object__remove_unsuccessful(self):
         self.assertEqual(len(self.repo) , 4)
-        self.repo.delete_book(999)
+        self.repo.remove(999)
         self.assertEqual( len(self.repo) , 4)
 
     def test_get_all__correct_case__return_list(self):

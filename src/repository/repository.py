@@ -3,6 +3,7 @@ from datetime import date
 from src.domain.Book import Book
 from src.domain.Client import Client
 from src.domain.Rental import Rental
+from src.IterableDataStructure import *
 
 import pickle
 
@@ -13,7 +14,7 @@ class RepositoryException(Exception):
 
 class BookRepository:
     def __init__(self):
-        self.books = list()
+        self.books = IterableEntity(list())
 
     def find_by_id(self, book_id):
         index = 0
@@ -37,10 +38,20 @@ class BookRepository:
         else:
             raise RepositoryException("Book already exists.")
 
-    def delete_book(self, book_id):
+    def remove(self, book_id):
         book_to_remove = self.find_by_id(book_id)
-        if book_to_remove is not None:
-            self.books.remove(book_to_remove)
+        index = self.get_index_by_id(book_id)
+        if index is not None:
+            self.books.remove(book_to_remove)  # ->  when not using the iterable structure
+            # del self.books[index]
+
+    def remove1(self, book_id):
+        #this function is a copy
+        book_to_remove = self.find_by_id(book_id)
+        index = self.get_index_by_id(book_id)
+        if index is not None:
+            self.books.remove(book_to_remove)  # ->  when not using the iterable structure
+            # del self.books[index]
 
     def update_book(self, book_id, new_book):
         book_to_update, index = self.get_index_by_id(book_id)
@@ -68,6 +79,10 @@ class BookRepository:
     def __len__(self):
         return len(self.books)
 
+    def str(self):
+        books_to_print = self.print_list_of_books()
+        return books_to_print
+
 
 class BookBinFileRepository(BookRepository):
     def __init__(self):
@@ -90,8 +105,8 @@ class BookBinFileRepository(BookRepository):
         super(BookBinFileRepository, self).add_book(book)
         self._save_file()
 
-    def delete_book(self, book_id):
-        super(BookBinFileRepository, self).delete_book(book_id)
+    def remove(self, book_id):
+        super(BookBinFileRepository, self).remove(book_id)
         self._save_file()
 
     def update_book(self, book_id, new_book):
@@ -126,8 +141,8 @@ class BookFileRepository(BookRepository):
         super(BookFileRepository, self).add_book(book)
         self._save_file()
 
-    def delete_book(self, book_id):
-        super(BookFileRepository, self).delete_book(book_id)
+    def remove(self, book_id):
+        super(BookFileRepository, self).remove(book_id)
         self._save_file()
 
     def update_book(self, book_id, new_book):
@@ -137,7 +152,7 @@ class BookFileRepository(BookRepository):
 
 class RentalRepository:
     def __init__(self):
-        self._rental_list = list()
+        self._rental_list = IterableEntity(list())
 
     def returned_date(self, index):
         return self._rental_list[index].__returned_date
@@ -300,7 +315,7 @@ class RentalFileRepository(RentalRepository):
 
 class ClientRepository:
     def __init__(self):
-        self._client_list = []
+        self._client_list = IterableEntity(list())
 
     def find_client_by_id(self, client_id):
         for client in self._client_list:

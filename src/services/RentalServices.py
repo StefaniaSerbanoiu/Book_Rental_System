@@ -1,6 +1,7 @@
 import copy
 
 from src.domain.Client import Client
+from src.IterableDataStructure import *
 from src.domain.Book import Book
 from src.domain.Rental import Rental
 from src.repository.repository import BookRepository, ClientRepository, RentalRepository, ClientBinFileRepository, \
@@ -98,27 +99,70 @@ class RentalServices:
                     books_repository[index2] = auxiliary_element
         return books_repository
 
+    def comparison_function_for_books(self, first_book, second_book):
+        first_book_rental_count = self.__rental_repository.get_rental_count_by_book_id(first_book.book_id)
+        second_book_rental_count = self.__rental_repository.get_rental_count_by_book_id(second_book.book_id)
+
+        if first_book_rental_count < second_book_rental_count:
+            return True
+        return False
+
+    def sort_descending_order_most_rented_books_shell_sort(self):
+        books_repository = copy.deepcopy(self.__book_repository)
+        shell_sort(books_repository, self.comparison_function_for_books)
+        return books_repository
+
     @staticmethod
     def calculate_days_between_2_dates(rented_date, returned_date):
-        number_of_years = returned_date.year - rented_date.year
-        number_of_months = returned_date.month - rented_date.month
-        number_of_days = returned_date.day - rented_date.day
-        if number_of_days < 0:
-            number_of_days += 30
-            number_of_months -= 1
-        if number_of_months < 0 and number_of_years > 0:
-            number_of_months += 12
-            number_of_years -= 1
-        return number_of_years * 365 + number_of_months * 30 + number_of_days
+        if returned_date.year == 1:
+            return 1
+        else:
+            number_of_years = returned_date.year - rented_date.year
+            number_of_months = returned_date.month - rented_date.month
+            number_of_days = returned_date.day - rented_date.day
+            if number_of_days < 0:
+                number_of_days += 30
+                number_of_months -= 1
+            if number_of_months < 0:
+                if number_of_years > 0:
+                    number_of_months += 12
+                    number_of_years -= 1
+                else:
+                    number_of_months = 0
+
+            return number_of_years * 365 + number_of_months * 30 + number_of_days
 
     def get_client_activity(self, client_id):
-        active_days = 0
-        rental_repository_length = len(self.__rental_repository)
-        for index in range(rental_repository_length):
-            if self.__rental_repository[index].client_id == client_id:
-                active_days += self.calculate_days_between_2_dates(self.__rental_repository[index].rented_date,
-                                                                   self.__rental_repository[index].returned_date)
-        return active_days
+        if client_id == 23:
+            active_days = 0
+            rental_repository_length = len(self.__rental_repository)
+            for index in range(rental_repository_length):
+                if self.__rental_repository[index].client_id == client_id:
+                    active_days += self.calculate_days_between_2_dates(self.__rental_repository[index].rented_date,
+                                                                       self.__rental_repository[index].returned_date)
+            return active_days
+        else:
+            active_days = 0
+
+            rental_repository_length = len(self.__rental_repository)
+            for index in range(rental_repository_length):
+                if self.__rental_repository[index].client_id == client_id:
+                    active_days += self.calculate_days_between_2_dates(self.__rental_repository[index].rented_date,
+                                                                       self.__rental_repository[index].returned_date)
+            return active_days
+
+    def comparison_function_for_clients(self, first_client, second_client):
+        first_client_activity = self.get_client_activity(first_client.client_id)
+        second_client_activity = self.get_client_activity(second_client.client_id)
+
+        if first_client_activity < second_client_activity:
+            return True
+        return False
+
+    def sort_descending_order_most_active_clients_shell_sort(self):
+        clients_repository = copy.deepcopy(self.__client_repository)
+        shell_sort(clients_repository, self.comparison_function_for_clients)
+        return clients_repository
 
     def sort_descending_order_most_active_clients(self):
         clients_repository = copy.deepcopy(self.__client_repository)
@@ -159,6 +203,19 @@ class RentalServices:
             if author == author_to_check:
                 books += 1
         return books
+
+    def comparison_function_for_authors(self, first_author, second_author):
+        rented_books_written_by_first_author = self.get_rented_books_count_by_author(first_author)
+        rented_books_written_by_second_author = self.get_rented_books_count_by_author(second_author)
+
+        if rented_books_written_by_first_author < rented_books_written_by_second_author:
+            return True
+        return False
+
+    def sort_descending_order_most_rented_authors_shell_sort(self):
+        authors_list = self.get_list_of_authors()
+        shell_sort(authors_list, self.comparison_function_for_authors)
+        return authors_list
 
     def sort_descending_order_most_rented_authors(self):
         authors_list = self.get_list_of_authors()
