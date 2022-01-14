@@ -30,14 +30,6 @@ class IterableEntity:
         self._position += 1
         return self.__list_of_objects[self._position - 1]
 
-    """"
-    def __next__(self):
-        if self.__position >= len(self.__list_of_objects):
-            return -1
-        self.__position += 1
-        return self.__list_of_objects[self.__position - 1]
-    """
-
     def append(self, element):
         self.__list_of_objects.append(element)
 
